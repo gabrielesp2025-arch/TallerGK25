@@ -21,7 +21,6 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      # Usa Gradle sin wrapper (la acción instala Gradle y cachea)
       - name: Build Debug APK
         uses: gradle/gradle-build-action@v3
         with:
