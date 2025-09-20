@@ -12,9 +12,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.tallergk25.data.FileRepo
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OrdersScreen(onOrderClick: (Long) -> Unit) {
+fun OrdersScreen(
+    onNewOrder: (Long) -> Unit,
+    onOrderClick: (Long) -> Unit
+) {
     val app = LocalContext.current.applicationContext as Application
     val repo = remember { FileRepo(app) }
     var orders by remember { mutableStateOf(repo.listOrders()) }
@@ -25,26 +27,26 @@ fun OrdersScreen(onOrderClick: (Long) -> Unit) {
             FloatingActionButton(onClick = {
                 val id = repo.newOrder()
                 orders = repo.listOrders()
-                onOrderClick(id)
+                onNewOrder(id)
             }) { Text("+") }
         }
-    ) { padding ->
+    ) { p ->
         LazyColumn(
             modifier = Modifier
-                .padding(padding)
+                .padding(p)
                 .fillMaxSize()
         ) {
-            items(orders) { order ->
+            items(orders) { o ->
                 Card(
                     modifier = Modifier
+                        .padding(12.dp)
                         .fillMaxWidth()
-                        .padding(8.dp)
-                        .clickable { onOrderClick(order.id) }
+                        .clickable { onOrderClick(o.id) }
                 ) {
                     Column(Modifier.padding(16.dp)) {
-                        Text("Cliente: ${order.customer.name}")
-                        Text("Vehículo: ${order.vehicle.brand} ${order.vehicle.model}")
-                        Text("Matrícula: ${order.vehicle.plate}")
+                        Text("OT #${o.id}")
+                        Text("Cliente: ${o.customer.name}")
+                        Text("Vehículo: ${o.vehicle.brand} ${o.vehicle.model} - ${o.vehicle.plate}")
                     }
                 }
             }
