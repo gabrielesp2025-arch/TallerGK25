@@ -10,22 +10,19 @@ import androidx.navigation.navArgument
 @Composable
 fun NavRoot() {
     val nav = rememberNavController()
-
-    NavHost(
-        navController = nav,
-        startDestination = "orders"
-    ) {
+    NavHost(navController = nav, startDestination = "orders") {
         composable("orders") {
             OrdersScreen(
+                onNewOrder = { id -> nav.navigate("orderDetail/$id") },
                 onOrderClick = { id -> nav.navigate("orderDetail/$id") }
             )
         }
         composable(
-            "orderDetail/{orderId}",
-            arguments = listOf(navArgument("orderId") { type = NavType.StringType })
+            route = "orderDetail/{orderId}",
+            arguments = listOf(navArgument("orderId") { type = NavType.LongType })
         ) { backStack ->
-            val id = backStack.arguments?.getString("orderId") ?: ""
-            OrderDetailScreen(orderId = id)
+            val orderId = backStack.arguments?.getLong("orderId") ?: 0L
+            OrderDetailScreen(orderId = orderId)
         }
     }
 }
