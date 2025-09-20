@@ -16,6 +16,7 @@
             </intent-filter>
         </activity>
 
+        <!-- FileProvider para guardar/leer fotos internas -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.tallergk25.fileprovider"
