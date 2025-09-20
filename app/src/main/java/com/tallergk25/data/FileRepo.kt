@@ -1,8 +1,9 @@
 package com.tallergk25.data
 
 import android.content.Context
-import kotlinx.serialization.encodeToString
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
 import java.util.concurrent.atomic.AtomicLong
@@ -13,33 +14,34 @@ class FileRepo(private val ctx: Context) {
     private val file: File get() = File(ctx.filesDir, "taller_data.json")
 
     private var seq = AtomicLong(System.currentTimeMillis())
-    private var state = StorageState()
+    private var state: StorageState = StorageState()
 
     init {
         load()
-        // Si no hay órdenes, crea 1 demo para empezar
+        // Si no hay órdenes, crea una de demo para que la app muestre algo
         if (state.orders.isEmpty()) {
             newOrder()
         }
     }
 
     @Synchronized
-    private fun load() {
+    fun load() {
         state = if (file.exists()) {
             runCatching { json.decodeFromString<StorageState>(file.readText()) }
                 .getOrElse { StorageState() }
-        } else {
-            StorageState()
-        }
+        } else StorageState()
     }
 
     @Synchronized
-    private fun save() {
+    fun save() {
         file.writeText(json.encodeToString(state))
     }
 
     @Synchronized
     fun listOrders(): List<Order> = state.orders.sortedByDescending { it.id }
+
+    @Synchronized
+    fun getOrder(id: Long): Order? = state.orders.find { it.id == id }
 
     @Synchronized
     fun newOrder(): Long {
@@ -57,9 +59,6 @@ class FileRepo(private val ctx: Context) {
         save()
         return id
     }
-
-    @Synchronized
-    fun getOrder(id: Long): Order? = state.orders.find { it.id == id }
 
     @Synchronized
     fun updateVehicle(
@@ -82,24 +81,13 @@ class FileRepo(private val ctx: Context) {
     }
 
     @Synchronized
-    fun addPhoto(orderId: Long, stage: PhotoStage, path: String) {
-        val o = getOrder(orderId) ?: return
-        val p = o.photos + PhotoRef(id = seq.incrementAndGet(), stage = stage, path = path)
-        update(o.copy(photos = p))
-    }
-
-    @Synchronized
-    fun saveSignature(orderId: Long, signaturePath: String) {
-        val o = getOrder(orderId) ?: return
-        update(o.copy(customerSignaturePath = signaturePath))
-    }
-
-    @Synchronized
     private fun update(n: Order) {
         state = state.copy(orders = state.orders.map { if (it.id == n.id) n else it })
         save()
     }
 }
 
-@kotlinx.serialization.Serializable
-data class StorageState(val orders: List<Order> = emptyList())
+@Serializable
+data class StorageState(
+    val orders: List<Order> = emptyList()
+)
