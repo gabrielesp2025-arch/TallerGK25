@@ -4,10 +4,11 @@
 
     <application
         android:allowBackup="true"
-        android:label="TallerGK25"
-        android:theme="@style/Theme.Material3.DayNight.NoActionBar">
+        android:label="Taller"
+        android:theme="@style/Theme.TallerGK25">
 
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
