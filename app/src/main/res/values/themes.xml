@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tema de la app basado en Material 3, sin ActionBar -->
+    <style name="Theme.TallerGK25" parent="Theme.Material3.DayNight">
+        <!-- Quitar barra de título/ActionBar -->
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowActionBar">false</item>
+    </style>
+</resources>
