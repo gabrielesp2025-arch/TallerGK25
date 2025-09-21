@@ -28,14 +28,18 @@ dependencies {
     implementation(composeBom)
     androidTestImplementation(composeBom)
 
+    // Compose / UI
     implementation("androidx.compose.material3:material3")
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.activity:activity-compose:1.9.2")
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-tooling-preview")
     debugImplementation("androidx.compose.ui:ui-tooling")
-
     implementation("androidx.navigation:navigation-compose:2.8.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
     implementation("io.coil-kt:coil-compose:2.5.0")
+
+    // ✅ AÑADE ESTAS DOS (necesarias para el tema y atributos del styles.xml)
+    implementation("com.google.android.material:material:1.12.0")  // Theme.Material3.DayNight
+    implementation("androidx.appcompat:appcompat:1.7.0")          // attrs como windowActionBar
 }
