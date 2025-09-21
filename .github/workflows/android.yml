@@ -21,14 +21,54 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Build Debug APK
+      # Diagnóstico rápido del repo
+      - name: Show tree and key files
+        run: |
+          echo "== Repo tree =="
+          ls -la
+          echo "== App tree =="
+          ls -la app || true
+          echo "== Gradle files =="
+          cat settings.gradle.kts || true
+          cat build.gradle.kts || true
+          cat app/build.gradle.kts || true
+          echo "== Manifest =="
+          sed -n '1,160p' app/src/main/AndroidManifest.xml || true
+          echo "== Theme =="
+          sed -n '1,160p' app/src/main/res/values/themes.xml || true
+          echo "== FileProvider paths =="
+          sed -n '1,160p' app/src/main/res/xml/file_paths.xml || true
+          echo "== Kotlin packages =="
+          grep -R --line-number "^package " app/src/main/java || true
+
+      # Build con logs detallados
+      - name: Build Debug APK (with diagnostics)
         uses: gradle/gradle-build-action@v3
         with:
           gradle-version: 8.7
-          arguments: assembleDebug
+          arguments: |
+            --no-daemon
+            --stacktrace
+            --info
+            assembleDebug
 
+      # Sube APK si existiera
       - name: Upload APK artifact
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: app-debug
           path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: ignore
+
+      # Sube reportes y logs para revisar fallos de resources/compile
+      - name: Upload build reports & logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-reports-and-logs
+          path: |
+            app/build/reports/**
+            app/build/outputs/logs/**
+            app/build/intermediates/merged_manifests/**/AndroidManifest.xml
+          if-no-files-found: warn
