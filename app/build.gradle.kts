@@ -20,7 +20,24 @@ android {
 
     buildFeatures { compose = true }
     composeOptions { kotlinCompilerExtensionVersion = "1.5.14" }
-    packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
+
+    // ✅ Alinea Java y Kotlin a 17 (soluciona el error 1.8 vs 17)
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+
+    packaging {
+        resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" }
+    }
+}
+
+// ✅ Refuerza que Kotlin use toolchain 17
+kotlin {
+    jvmToolchain(17)
 }
 
 dependencies {
@@ -39,7 +56,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
     implementation("io.coil-kt:coil-compose:2.5.0")
 
-    // ✅ AÑADE ESTAS DOS (necesarias para el tema y atributos del styles.xml)
-    implementation("com.google.android.material:material:1.12.0")  // Theme.Material3.DayNight
-    implementation("androidx.appcompat:appcompat:1.7.0")          // attrs como windowActionBar
+    // Temas/atributos de Material + AppCompat (usados por tu styles.xml)
+    implementation("com.google.android.material:material:1.12.0")
+    implementation("androidx.appcompat:appcompat:1.7.0")
 }
